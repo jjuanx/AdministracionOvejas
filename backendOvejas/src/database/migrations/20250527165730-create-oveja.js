@@ -5,18 +5,17 @@ module.exports = {
     await queryInterface.createTable('Ovejas', {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      id: {
-        type: Sequelize.INTEGER
-      },
       fechaUltimoParto: {
-        type: Sequelize.DATE
+        allowNull: true,
+        type: Sequelize.DATEONLY
       },
       estado: {
-        type: Sequelize.ENUM
+        type: Sequelize.ENUM('buena', 'regular', 'mala'),
+        allowNull: false,
+        defaultValue: 'buena'
       },
       createdAt: {
         allowNull: false,
@@ -29,6 +28,7 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Ovejas_estado";');
     await queryInterface.dropTable('Ovejas');
   }
 };

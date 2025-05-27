@@ -1,22 +1,18 @@
 {
    "name": "backendovejas",
    "version": "1.0.0",
-  "main": "src/app.js",                   
-  "type": "module",                          
- "imports": {                        
-    "#root/": "./",
-    "#src/": "./src/"
+    "main": "src/app.js",                   
+    "type": "module",                          
+    "imports": {                        
+        "#root/": "./",
+        "#src/": "./src/"
   },
-   "scripts": {
-    "dev"     : "nodemon --watch src --ext js,mjs --exec node src/app.js",
-    "start"   : "node src/app.js", 
-    "sequelize": "NODE_PATH=cli node ./node_modules/.bin/sequelize",
-    "migrate"  : "npm run sequelize db:migrate",
-    "seed"     : "npm run sequelize db:seed:all",
-
-
-    "test"     : "cross-env NODE_ENV=test jest --detectOpenHandles --verbose"
-   },
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "sequelize": "cross-env NODE_PATH=cli node ./node_modules/.bin/sequelize",
+    "migrate": "npm run sequelize db:migrate",
+    "seed": "npm run sequelize db:seed:all"
+  },
    "dependencies": {
      "cors": "^2.8.5",
      "dotenv": "^16.5.0",

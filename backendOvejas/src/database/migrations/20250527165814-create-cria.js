@@ -10,13 +10,19 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       fechaNacimiento: {
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY,
+        allowNull: false
       },
       sexo: {
-        type: Sequelize.STRING
+        type: Sequelize.ENUM('macho', 'hembra'),
+        allowNull: false
       },
       ovejaId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'Ovejas', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -29,6 +35,7 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Crias_sexo";');
     await queryInterface.dropTable('Cria');
   }
 };

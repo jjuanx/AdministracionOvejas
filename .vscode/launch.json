@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Debug Backend",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run-script", "start:backend"],
+            "skipFiles": ["<node_internals>/**"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Frontend",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:19006",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach to Node Backend",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "restart": true,
+            "protocol": "inspector",
+            "skipFiles": ["<node_internals>/**"]
+        }
+    ]
+}

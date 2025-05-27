@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Solo usuarios autenticados pueden leer la colección ovejas,
+    // y sólo pueden crear/editar si los datos cumplen validaciones
+    match /ovejas/{ovejaId} {
+      allow read: if request.auth != null
+      allow create, update, delete: if request.auth != null && validOveja(request.resource.data)
+    }
+
+    match /{document=**} {
+      allow read, write: if false
+    }
+
+    //Funcion  de validacion de cada oveja
+    function validOveja(data) {
+      return 
+        data.id is string && data.id.size() == 8 && data.id.matches('^[0-9]{8}$')
+        && data.fechaAlto is timestamp
+        && data.edad is int && data.edad >= 0
+        && data.estado in ['buena', 'regular', 'mala']
+        && data.vecesParida is int
+        && data.vecesParida >= 0
+        && data.sexoCria in ['macho','hembra'];
+
+    }
+  }
+}

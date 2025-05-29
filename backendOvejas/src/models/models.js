@@ -2,7 +2,7 @@
 import Sequelize from 'sequelize';
 import dbCfgCjs from '#root/config/database.cjs';     // único fichero CJS
 import loadOvejaModel from './oveja.js';
-import loadCriaModel  from './cria.js';
+import loadCriaModel  from './Cria.js';
 
 // 1.- Instancia única de Sequelize
 const env = process.env.NODE_ENV || 'development';

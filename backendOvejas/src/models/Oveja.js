@@ -41,7 +41,11 @@ const loadModel = (sequelize, DataTypes) => {
         'regular'
       ],
       defaultValue: 'buena'
-    }
+    },
+    userId: {
+      allowNull: false,
+      type: DataTypes.INTEGER
+    },
   }, {
     sequelize,
     modelName: 'Oveja',

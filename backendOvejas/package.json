@@ -1,47 +1,46 @@
 {
    "name": "backendovejas",
    "version": "1.0.0",
-    "main": "src/app.js",                   
-    "type": "module",                          
-    "imports": {                        
-        "#root/": "./",
-        "#src/": "./src/"
-  },
-  "scripts": {
-    "dev": "nodemon src/server.js",
-    "sequelize": "cross-env NODE_PATH=cli node ./node_modules/.bin/sequelize",
-    "migrate": "npm run sequelize db:migrate",
-    "seed": "npm run sequelize db:seed:all"
-  },
-   "dependencies": {
-     "cors": "^2.8.5",
-     "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "helmet": "^6.2.0",
-    "express-validator": "^6.15.0",
-    "sequelize": "^6.37.7",
-    "mysql2": "^3.14.1",         
-
-    "bcryptjs": "^2.4.3",
-    "passport": "^0.6.0",
-    "passport-http-bearer": "^1.0.1",
-    "multer": "^1.4.5-lts.1"
+   "main": "src/app.js",
+   "type": "module",
+   "imports": {
+      "#root/": "./",
+      "#src/": "./src/"
    },
-
+   "scripts": {
+      "dev": "nodemon src/server.js",
+      "sequelize": "cross-env NODE_PATH=cli sequelize",
+      "migrate": "npm run sequelize db:migrate",
+      "seed": "npm run sequelize db:seed:all",
+      "setup"     : "npm run migrate && npm run seed"
+   },
+   "dependencies": {
+      "bcryptjs": "^2.4.3",
+      "cors": "^2.8.5",
+      "dotenv": "^16.5.0",
+      "express": "^5.1.0",
+      "express-validator": "^6.15.0",
+      "helmet": "^6.2.0",
+      "mariadb": "^3.4.2",
+      "multer": "^1.4.5-lts.1",
+      "mysql2": "^3.14.1",
+      "passport": "^0.6.0",
+      "passport-http-bearer": "^1.0.1",
+      "sequelize": "^6.37.7"
+   },
    "devDependencies": {
-     "nodemon": "^3.1.10",
-
-    "@faker-js/faker": "^7.6.0",
-    "cross-env": "^7.0.3",
-    "jest": "^29.7.0",
-    "supertest": "^6.3.4",
-
-    "eslint": "^8.57.1",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.6.0",
-    "eslint-plugin-jest": "^27.9.0"
+      "@faker-js/faker": "^7.6.0",
+      "cross-env": "^7.0.3",
+      "eslint": "^8.57.1",
+      "eslint-config-standard": "^17.1.0",
+      "eslint-plugin-import": "^2.31.0",
+      "eslint-plugin-jest": "^27.9.0",
+      "eslint-plugin-n": "^16.6.2",
+      "eslint-plugin-node": "^11.1.0",
+      "eslint-plugin-promise": "^6.6.0",
+      "jest": "^29.7.0",
+      "nodemon": "^3.1.10",
+      "sequelize-cli": "^6.6.3",
+      "supertest": "^6.3.4"
    }
 }

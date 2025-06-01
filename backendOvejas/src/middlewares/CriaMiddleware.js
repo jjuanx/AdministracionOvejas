@@ -16,6 +16,18 @@ const checkCriaPropietario = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send(err);
   }
-};
+}
 
-export {checkCriaPropietario}
+const checkCriaOvejaPropietario = async (req, res, next) => {
+  try {
+    const oveja = await Oveja.findByPk(req.body.ovejaId)
+    if (!oveja) return res.status(404).send('Oveja madre no encontrada')
+    if (req.user.id === oveja.userId) return next()
+    return res.status(403).send('No tienes privilegios sobre esta oveja madre')
+  } catch (err) {
+    return res.status(500).send(err)
+  }
+}
+
+
+export {checkCriaPropietario, checkCriaOvejaPropietario}

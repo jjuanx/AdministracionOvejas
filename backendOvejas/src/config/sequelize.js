@@ -3,7 +3,7 @@
  * ya definida en config/database.cjs (CommonJS).
  */
 import { Sequelize } from 'sequelize';
-import dbConfigCjs from '#root/config/database.cjs'; // Node puede importar CJS sin problema
+import dbConfigCjs from './config.cjs'; // Node puede importar CJS sin problema
 
 const ENV = process.env.NODE_ENV || 'development';
 const cfg = dbConfigCjs[ENV];

@@ -4,7 +4,9 @@ import { handleValidation } from '../middlewares/ValidationHandlingMiddleware.js
 import CriaController from '../controllers/CriaController.js'
 import * as CriaMiddleware from '../middlewares/CriaMiddleware.js'
 import { checkEntityExists } from '../middlewares/EntityMiddleware.js';
-import { Cria } from '../models/Cria.js';
+import { Cria } from '../models/models.js';
+import { hasRole, isLoggedIn } from '../middlewares/AuthMiddleware.js'
+
 
 const loadFileRoutes = (app) => {
     app.route('/crias')
@@ -12,8 +14,11 @@ const loadFileRoutes = (app) => {
             CriaController.index
         )
         .post(
+            isLoggedIn,
+            hasRole('propietario'),
             CriaValidation.create,
             handleValidation,
+            CriaMiddleware.checkCriaOvejaPropietario,
             CriaController.create
         )
     
@@ -23,6 +28,8 @@ const loadFileRoutes = (app) => {
             CriaController.show
         )
         .put(
+            isLoggedIn,
+            hasRole('propietario'),
             checkEntityExists(Cria, 'criaId'),
             CriaMiddleware.checkCriaPropietario,
             CriaValidation.update,
@@ -30,6 +37,8 @@ const loadFileRoutes = (app) => {
             CriaController.update
         )
         .delete(
+            isLoggedIn,
+            hasRole('propietario'),
             checkEntityExists(Cria, 'criaId'),
             CriaMiddleware.checkCriaPropietario,
             CriaController.destroy

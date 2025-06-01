@@ -1,8 +1,9 @@
 // src/models/index.js
 import Sequelize from 'sequelize';
-import dbCfgCjs from '#root/config/database.cjs';     // único fichero CJS
+import dbCfgCjs from '../config/config.cjs';     // único fichero CJS
 import loadOvejaModel from './oveja.js';
 import loadCriaModel  from './Cria.js';
+import loadUsuarioModel from './Usuario.js'
 
 // 1.- Instancia única de Sequelize
 const env = process.env.NODE_ENV || 'development';
@@ -15,11 +16,12 @@ const sequelizeSession = new Sequelize(
 );
 
 // 2.- Cargar cada modelo (siguiendo patrón loader)
-const Oveja = loadOvejaModel(sequelizeSession, Sequelize.DataTypes);
-const Cria  = loadCriaModel (sequelizeSession, Sequelize.DataTypes);
+const Oveja = loadOvejaModel(sequelizeSession, Sequelize.DataTypes)
+const Cria  = loadCriaModel (sequelizeSession, Sequelize.DataTypes)
+const Usuario = loadUsuarioModel(sequelizeSession, Sequelize.DataTypes)
 
 // 3.- Registrar todos en un objeto para recorrer asociaciones
-const db = { Oveja, Cria };
+const db = {Usuario, Oveja, Cria };
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
@@ -27,4 +29,4 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-export { Oveja, Cria, sequelizeSession };
+export { Oveja, Cria, Usuario, sequelizeSession };

@@ -26,11 +26,20 @@ module.exports = {
       token: { 
         type: Sequelize.STRING 
       },
-      tokenExpiration: { type: Sequelize.DATE },
-      numeroTelefono:  { type: Sequelize.STRING, allowNull: false },
-      avatar:          { type: Sequelize.STRING },
-      direccion:       { type: Sequelize.STRING, allowNull: false },
-      codigoPostal:    { type: Sequelize.STRING, allowNull: false },
+      tokenExpiration: { 
+        type: Sequelize.DATE 
+      },
+      numeroTelefono:  { 
+        type: Sequelize.STRING,
+         allowNull: false },
+      avatar:          { 
+        type: Sequelize.STRING },
+      direccion:       { 
+        type: Sequelize.STRING,
+         allowNull: false },
+      codigoPostal:    { 
+        type: Sequelize.STRING,
+        allowNull: false },
       tipoUsuario:     {
         type: Sequelize.ENUM('consumidor','propietario'),
         allowNull: false

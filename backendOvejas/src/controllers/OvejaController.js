@@ -14,6 +14,24 @@ const index = async function (req, res) {
     }
 }
 
+const indexPropietario = async function (req, res) {
+    try {
+        const ovejas = await Oveja.findAll(
+            {
+                attributes: { exclude: ['userId']},
+                where: {userId: req.user.id},
+                include: [{
+                    model: Cria,
+                    as: 'Crias'
+                }]
+            }
+        )
+        res.json(ovejas)
+    } catch (err){
+        res.status(500).send(err)
+    }
+}
+
 const show = async function (req, res) {
     try {
         const oveja = await Oveja.findByPk(req.params.ovejaId,{
@@ -64,6 +82,7 @@ const OvejaController = {
     show,
     create,
     update,
-    destroy
+    destroy,
+    indexPropietario
 }
 export default OvejaController

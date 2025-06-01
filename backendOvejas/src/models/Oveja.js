@@ -9,6 +9,7 @@ const loadModel = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Oveja.hasMany(models.Cria, {foreignKey: 'ovejaId', as: 'Crias'})
+      Oveja.belongsTo(models.Usuario, {foreignKey: 'userId', as: 'Propietario'})
     }
 
     get edadOveja() {
@@ -34,12 +35,7 @@ const loadModel = (sequelize, DataTypes) => {
     },
     estado: {
       allowNull: false,
-      type: DataTypes.ENUM,
-      values: [
-        'buena',
-        'mala',
-        'regular'
-      ],
+      type: DataTypes.ENUM('buena', 'regular', 'mala'),
       defaultValue: 'buena'
     },
     userId: {

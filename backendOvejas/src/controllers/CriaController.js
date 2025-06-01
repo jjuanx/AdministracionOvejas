@@ -11,6 +11,18 @@ const index = async function (req, res) {
   }
 };
 
+const indexByOveja = async (req, res) => {
+  try {
+    const crias = await Cria.findAll({
+      where: { ovejaId: req.params.ovejaId }
+    })
+    res.json(crias)
+  } catch (err) {
+    res.status(500).send(err.message)
+  }
+}
+
+
 
 const show = async function (req, res) {
   try {
@@ -61,5 +73,5 @@ const destroy = async function (req, res) {
   }
 };
 
-const CriaController = { index, show, create, update, destroy };
+const CriaController = { index, show, create, update, destroy, indexByOveja };
 export default CriaController;

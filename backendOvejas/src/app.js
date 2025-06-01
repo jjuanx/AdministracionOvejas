@@ -9,7 +9,7 @@ const initializeApp = async () => {
   dotenv.config()
   const app = express()
   loadGlobalMiddlewares(app)
-  loadRoutes(app)
+  await loadRoutes(app)
   initPassport()
   app.connection = await initializeDatabase()
   await postInitializeDatabase(app)

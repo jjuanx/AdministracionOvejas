@@ -8,35 +8,40 @@ module.exports = {
         fechaUltimoParto: '2024-01-15',
         estado: 'buena',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        userId: 1
       },
       {
         id: 22222222,
         fechaUltimoParto: '2023-06-10',
         estado: 'regular',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        userId: 1
       },
       {
         id: 33333333,
         fechaUltimoParto: '2022-12-05',
         estado: 'mala',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        userId: 2
       },
       {
         id: 44444444,
         fechaUltimoParto: null,         // todavía no ha parido
         estado: 'buena',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        userId: 1
       },
       {
         id: 55555555,
         fechaUltimoParto: '2025-03-20',
         estado: 'regular',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+         userId: 2
       }
     ], {});
   },

@@ -10,7 +10,7 @@ const loadModel = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
-      Usuario.hasMany(models.Oveja, { foreignKey: 'userId' })
+      Usuario.hasMany(models.Oveja, { foreignKey: 'userId', as: 'Ovejas' })
     }
   }
   Usuario.init({
@@ -45,7 +45,7 @@ const loadModel = (sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.DATE
     },
-    nummeroTelefono: {
+    numeroTelefono: {
       allowNull: false,
       type: DataTypes.STRING
     },
@@ -62,11 +62,7 @@ const loadModel = (sequelize, DataTypes) => {
     },
     tipoUsuario: {
       allowNull: false,
-      type: DataTypes.ENUM,
-      values: [
-        'consumidor',
-        'propietario'
-      ]
+      type: DataTypes.ENUM('consumidor','propietario')
     },
     createdAt: {
       allowNull: false,
@@ -86,7 +82,8 @@ const loadModel = (sequelize, DataTypes) => {
       }
     ],
     sequelize,
-    modelName: 'Usuario'
+    modelName: 'Usuario',
+    tableName: 'Usuarios'
   })
   return Usuario
 }

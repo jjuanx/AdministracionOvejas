@@ -1,4 +1,5 @@
-import { Model } from 'sequelize'
+import { fn, Model, Sequelize } from 'sequelize'
+import dayjs from 'dayjs'
 
 const loadModel = (sequelize, DataTypes) => {
   class Oveja extends Model {
@@ -12,15 +13,6 @@ const loadModel = (sequelize, DataTypes) => {
       Oveja.belongsTo(models.Usuario, {foreignKey: 'userId', as: 'Propietario'})
     }
 
-    get edadOveja() {
-      if (!this.fechaUltimoParto) return null;
-      const diff = Date.now() - new Date(this.fechaUltimoParto);
-      return Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
-    }
-
-    get vecesParida() {
-      return this.Crias ? this.Crias.length : 0;
-    }
   }
 
   Oveja.init({
@@ -42,6 +34,24 @@ const loadModel = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.INTEGER
     },
+    fechaNacimiento: {
+      allowNull: false,
+      type: DataTypes.DATEONLY
+    },
+    edad: {
+      type: DataTypes.VIRTUAL,
+      get () {
+        const fNacimiento = this.fechaNacimiento
+        if (!fNacimiento) return null
+        return dayjs().diff(dayjs(fNacimiento), 'year')
+      }
+    },
+    vecesParida: {
+      type: DataTypes.VIRTUAL,
+      get () {
+      return this.Crias ? this.Crias.length : 0;
+    }
+    }
   }, {
     sequelize,
     modelName: 'Oveja',

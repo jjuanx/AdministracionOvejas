@@ -17,6 +17,10 @@ module.exports = {
         allowNull: false,
         defaultValue: 'buena'
       },
+      fechaNacimiento: {
+        allowNull: false,
+        type: Sequelize.DATEONLY
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

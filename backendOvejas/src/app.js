@@ -1,5 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import loadRoutes from './routes/index.js'
 import { initPassport } from './config/passport.js'
 import { initSequelize, disconnectSequelize } from './config/sequelize.js'
@@ -8,6 +10,11 @@ import loadGlobalMiddlewares from './middlewares/GlobalMiddlewaresLoader.js'
 const initializeApp = async () => {
   dotenv.config()
   const app = express()
+
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname  = dirname(__filename);
+  app.use('/public', express.static(path.join(__dirname,'..', 'public')));
+
   loadGlobalMiddlewares(app)
   await loadRoutes(app)
   initPassport()
@@ -15,6 +22,8 @@ const initializeApp = async () => {
   await postInitializeDatabase(app)
   return app
 }
+
+
 
 const initializeServer = async (enableConsoleLog = false) => {
   controlConsoleLog(enableConsoleLog)

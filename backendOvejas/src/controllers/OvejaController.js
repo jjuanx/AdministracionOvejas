@@ -23,7 +23,8 @@ const indexPropietario = async function (req, res) {
                 include: [{
                     model: Cria,
                     as: 'Crias'
-                }]
+                }],
+                order: [['id','ASC']]
             }
         )
         res.json(ovejas)

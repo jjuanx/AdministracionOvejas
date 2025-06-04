@@ -4,7 +4,7 @@ const hasRole = (...roles) => (req, res, next) => {
   if (!req.user) {
     return res.status(403).send({ error: 'Not logged in' })
   }
-  if (!roles.includes(req.user.userType)) {
+  if (!roles.includes(req.user.tipoUsuario)) {
     return res.status(403).send({ error: 'Not enough privileges' })
   }
   return next()

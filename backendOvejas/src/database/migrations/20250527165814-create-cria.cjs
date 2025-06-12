@@ -5,7 +5,6 @@ module.exports = {
     await queryInterface.createTable('Crias', {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
@@ -16,6 +15,11 @@ module.exports = {
       sexo: {
         type: Sequelize.ENUM('macho', 'hembra'),
         allowNull: false
+      },
+      viva: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
       },
       ovejaId: {
         type: Sequelize.INTEGER,

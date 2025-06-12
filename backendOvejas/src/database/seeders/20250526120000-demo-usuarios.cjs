@@ -57,7 +57,7 @@ down: async (queryInterface, Sequelize) => {
 ,
 
   copyFiles: () => {
-    const originDir      = path.resolve(__dirname, '../../public/example_assets');
+    const originDir      = path.resolve(__dirname, '../../../public/example_assets');
     const destinationDir = path.resolve(process.env.AVATARS_FOLDER);
 
     if (!fs.existsSync(originDir)) {

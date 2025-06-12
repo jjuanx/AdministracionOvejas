@@ -21,10 +21,6 @@ const loadModel = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       primaryKey: true
     },
-    fechaUltimoParto:{
-      allowNull: false,
-      type: DataTypes.DATEONLY,
-    },
     estado: {
       allowNull: false,
       type: DataTypes.ENUM('buena', 'regular', 'mala'),
@@ -50,7 +46,30 @@ const loadModel = (sequelize, DataTypes) => {
       type: DataTypes.VIRTUAL,
       get () {
       return this.Crias ? this.Crias.length : 0;
-    }
+      }
+    },
+    fechaUltimoParto:{
+      type: DataTypes.VIRTUAL,
+      get () {
+        const crias = this.Crias ?? []
+        if(!crias.length) return null 
+        const fecha = crias
+          .map(c => dayjs(c.fechaNacimiento))
+          .sort((a,b) => b.valueOf() - a.valueOf())[0]
+        return fecha.format('YYYY-MM-DD')
+      }
+    },
+    criasMuertas: {
+      type: DataTypes.VIRTUAL,
+      get () {
+        return this.Crias?.filter(c => c.viva===false).length || 0;
+      }
+    },
+    vecesParidaVivas: {
+      type: DataTypes.VIRTUAL,
+      get () {
+        return this.Crias?.filter(c => c.viva===true).length || 0;
+      }
     }
   }, {
     sequelize,

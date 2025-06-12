@@ -8,10 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      fechaUltimoParto: {
-        allowNull: true,
-        type: Sequelize.DATEONLY
-      },
       estado: {
         type: Sequelize.ENUM('buena', 'regular', 'mala'),
         allowNull: false,

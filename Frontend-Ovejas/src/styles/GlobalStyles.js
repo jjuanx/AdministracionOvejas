@@ -3,8 +3,8 @@ import { Platform } from 'react-native';
 /* ─── Paleta de marca ────────────────────────────────────── */
 const brandPrimary        = 'rgb(131, 54, 73)';   // burdeos
 const brandPrimaryTap     = 'rgb(126, 33, 56)';   // burdeos más oscuro
-const brandSecondary      = '#feca1b';   // amarillo
-const brandSecondaryTap   = '#eab607';   // amarillo más oscuro
+const brandSecondary      = 'rgb(28, 124, 153)';   // azul
+const brandSecondaryTap   = 'rgb(22, 102, 126)';   // azul más oscuro
 const brandSuccess        = '#95be05';   // verde “ok”
 const brandSuccessDisabled = `${brandSuccess}a8`
 const brandBackground     = '#fff9f0';   // marfil muy claro    (#f2f2f2 si prefieres gris)

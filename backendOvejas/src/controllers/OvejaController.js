@@ -1,12 +1,12 @@
 import {Oveja, Cria } from '../models/models.js'
 
+const criaAttrs = {model: Cria, as: 'Crias', attributes: ['id','viva', 'fechaNacimiento']}
+
 const index = async function (req, res) {
     try {
         const ovejas = await Oveja.findAll({
-            include: [{
-                model: Cria,
-                as: 'Crias'
-            }]
+            include: [criaAttrs],
+            order: [['id', 'ASC']]
         })
         res.json(ovejas)
     } catch (err){
@@ -20,10 +20,7 @@ const indexPropietario = async function (req, res) {
             {
                 attributes: { exclude: ['userId']},
                 where: {userId: req.user.id},
-                include: [{
-                    model: Cria,
-                    as: 'Crias'
-                }],
+                include: [criaAttrs],
                 order: [['id','ASC']]
             }
         )
@@ -36,18 +33,30 @@ const indexPropietario = async function (req, res) {
 const show = async function (req, res) {
     try {
         const oveja = await Oveja.findByPk(req.params.ovejaId,{
-            include: [{ model: Cria, as: 'Crias' }] });
-        res.json(oveja);
+            attributes: { exclude: ['userId']},
+            include: [
+                { model: Cria, as: 'Crias', attributes: ['id','viva', 'fechaNacimiento', 'sexo']}
+            ]
+        })
+        res.json(oveja)
     } catch (err) {
         res.status(500).send(err)
     }
 }
 
 const create = async function (req, res) {
-    let newOveja = Oveja.build(req.body)
     try{
-        newOveja = await newOveja.save()
-        res.json(newOveja)
+        const newOveja = await Oveja.create({
+            ...req.body,
+            userId: req.user.id
+        })
+
+        const created = await Oveja.findByPk(newOveja.id, {
+            attributes: {exclude: ['userId']},
+            include: [criaAttrs]
+        })
+
+        res.status(201).json(created)
     } catch (err) {
         res.status(500).send(err)
     }

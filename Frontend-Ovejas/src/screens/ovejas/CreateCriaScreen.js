@@ -33,7 +33,8 @@ export default function CreateCriaScreen ({ navigation, route }) {
       .typeError('El identificador debe ser un número')
       .integer('El identificador debe ser un número entero')
       .positive('El identificador debe ser un número positivo')
-      .test('len', 'Debe tener 3 digitos ', val => String(val || '').length === 3)
+      .min(1, 'El identificador debe ser como mínimo 1')
+      .max(9999, 'El identificador debe ser como máximo 9999')
       .required('El identificador es obligatorio'),
     fechaNacimiento: yup
       .date()

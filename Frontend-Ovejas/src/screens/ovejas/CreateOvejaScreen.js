@@ -34,7 +34,8 @@ export default function CreateOvejaScreen ({ navigation }) {
       .typeError('El identificador debe ser un número')
       .integer('El identificador debe ser un número entero')
       .positive('El identificador debe ser un número positivo')
-      .test('len', 'Debe tener 8 digitos ', val => String(val || '').length === 8)
+      .min(1, 'El identificador debe ser como mínimo 1')
+      .max(99999999, 'El identificador debe ser como máximo 99999999')
       .required('El identificador es obligatorio'),
     estado: yup
       .string()

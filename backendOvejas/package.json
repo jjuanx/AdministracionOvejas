@@ -15,6 +15,7 @@
       "seed": "npm run sequelize db:seed:all",
       "setup": "npm run migrate && npm run seed",
       "test": "cross-env NODE_ENV=production NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --verbose"
+      
    },
    "dependencies": {
       "bcryptjs": "^2.4.3",

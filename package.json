@@ -1,12 +1,9 @@
 {
-"scripts": {
-  "copy:env:win": "copy .env.backend backendOvejas\\.env && copy .env.frontend Frontend-Ovejas\\.env",
-
-  "install:backend": "cd backendOvejas && npm install",
-  "migrate:backend": "cd backendOvejas && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
-
-  "install:frontend": "cd Frontend-Ovejas && npm install",
-
-  "install:all:win": "npm run copy:env:win && npm run install:backend && npm run migrate:backend && npm run install:frontend"
-}
+  "scripts": {
+    "copy:env:win": "echo Frontend ya tiene .env",
+    "install:backend": "cd backendOvejas && npm install",
+    "migrate:backend": "cd backendOvejas && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all", 
+    "install:frontend": "cd Frontend-Ovejas && npm install",
+    "install:all:win": "npm run copy:env:win && npm run install:backend && npm run migrate:backend && npm run install:frontend"
+  }
 }

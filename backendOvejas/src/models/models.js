@@ -1,7 +1,7 @@
 // src/models/index.js
 import Sequelize from 'sequelize';
 import dbCfgCjs from '../config/config.cjs';     // único fichero CJS
-import loadOvejaModel from './oveja.js';
+import loadOvejaModel from './Oveja.js';
 import loadCriaModel  from './Cria.js';
 import loadUsuarioModel from './Usuario.js'
 

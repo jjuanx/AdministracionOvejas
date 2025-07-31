@@ -29,7 +29,7 @@ const initializeServer = async (enableConsoleLog = false) => {
   controlConsoleLog(enableConsoleLog)
   try {
     const app = await initializeApp()
-    const port = process.env.APP_PORT || 3000
+    const port = process.env.PORT || process.env.APP_PORT || 3000
     const server = await app.listen(port)
     console.log('DeliverUS listening at http://localhost:' + server.address().port)
     return { server, app }

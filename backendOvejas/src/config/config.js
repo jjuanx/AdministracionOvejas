@@ -25,12 +25,12 @@ const configEnvironments = {
     logging: false
   },
   production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mariadb',
+    username: process.env.DB_USER || process.env.MYSQLUSER,
+    password: process.env.DB_PASS || process.env.MYSQLPASSWORD,
+    database: process.env.DB_NAME || process.env.MYSQLDATABASE,
+    host: process.env.DB_HOST || process.env.MYSQLHOST,
+    port: process.env.DB_PORT || process.env.MYSQLPORT || 3306,
+    dialect: process.env.DB_DIALECT || 'mysql',
     logging: false,
     pool: {
       max: 5,

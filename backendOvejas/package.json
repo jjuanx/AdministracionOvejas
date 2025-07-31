@@ -9,13 +9,13 @@
    },
    "scripts": {
       "dev": "nodemon src/server.js",
-      "start": "node --inspect=0.0.0.0:9229 --watch ./src/backend.js",
+      "start": "node ./src/backend.js",
+      "start:dev": "node --inspect=0.0.0.0:9229 --watch ./src/backend.js",
       "sequelize": "cross-env NODE_PATH=cli sequelize",
       "migrate": "npm run sequelize db:migrate",
       "seed": "npm run sequelize db:seed:all",
       "setup": "npm run migrate && npm run seed",
       "test": "cross-env NODE_ENV=production NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --verbose"
-      
    },
    "dependencies": {
       "bcryptjs": "^2.4.3",
@@ -27,7 +27,7 @@
       "helmet": "^6.2.0",
       "mariadb": "^3.4.2",
       "multer": "^1.4.5-lts.1",
-      "mysql2": "^3.14.1",
+      "mysql2": "^3.14.3",
       "passport": "^0.6.0",
       "passport-http-bearer": "^1.0.1",
       "sequelize": "^6.37.7"

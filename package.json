@@ -4,6 +4,13 @@
     "install:backend": "cd backendOvejas && npm install",
     "migrate:backend": "cd backendOvejas && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all", 
     "install:frontend": "cd Frontend-Ovejas && npm install",
-    "install:all:win": "npm run copy:env:win && npm run install:backend && npm run migrate:backend && npm run install:frontend"
+    "install:all:win": "npm run copy:env:win && npm run install:backend && npm run migrate:backend && npm run install:frontend",
+    "start:backend": "cd backendOvejas && npm run start:dev",
+    "start:frontend": "cd Frontend-Ovejas && npm start",
+    "tunnel:ngrok": "ngrok http 3000",
+    "tunnel:devtunnel": "devtunnel host -p 3000 --allow-anonymous",
+    "deploy:prepare": "cd backendOvejas && npm install && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
+    "build:mobile": "cd Frontend-Ovejas && npx expo build:android",
+    "build:mobile:ios": "cd Frontend-Ovejas && npx expo build:ios"
   }
 }

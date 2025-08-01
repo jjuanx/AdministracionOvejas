@@ -74,6 +74,11 @@ const destroy = async (req, res) => {
 const _register = async (req, res, tipoUsuario) => {
   try {
     req.body.tipoUsuario = tipoUsuario
+    // Fix field mapping: nummeroTelefono -> numeroTelefono
+    if (req.body.nummeroTelefono) {
+      req.body.numeroTelefono = req.body.nummeroTelefono
+      delete req.body.nummeroTelefono
+    }
     const user = await Usuario.create(req.body)
     const updatedUser = await _updateToken(user.id, _createUserTokenDTO())
     res.json(updatedUser)

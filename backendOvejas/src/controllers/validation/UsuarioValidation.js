@@ -10,7 +10,7 @@ const create = [
   check('email').exists().withMessage('Required').isEmail().normalizeEmail(),
   check('password').exists().withMessage('Required').isStrongPassword({ minLength: 3 }),
   check('password').custom(value => !/\s/.test(value)).withMessage('No debe haber espacios en la contraseña'),
-  check('nummeroTelefono').exists().withMessage('Required').isString().isLength({ min: 1, max: 255 }).trim(),
+  check('numeroTelefono').exists().withMessage('Required').isString().isLength({ min: 1, max: 255 }).trim(),
   check('direccion').exists().withMessage('Required').isString().isLength({ min: 1, max: 255 }).trim(),
   check('codigoPostal').exists().withMessage('Required').isString().isLength({ min: 1, max: 255 }).trim(),
   check('avatar').custom((_, { req }) => checkFileIsImage(req, 'avatar')).withMessage('La imgen debe ser JPEG o PNG'),

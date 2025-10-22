@@ -1,8 +1,8 @@
-import React, {useContext, useState, useEffect} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Image, Keyboard,KeyboardAvoidingView, Platform, Pressable, StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native'
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { AuthorizationContext } from '../../context/AuthorizationContext'
+import { useAuth } from '../../context/FirebaseAuthContext'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import { showMessage } from 'react-native-flash-message'
@@ -17,7 +17,7 @@ import { buildInitialValues } from '../Helper'
 import * as ExpoImagePicker from 'expo-image-picker'
 
 export default function ProfileScreen () {
-  const { loggedInUser, signOut, updateProfile } = useContext(AuthorizationContext)
+  const { currentUser, userData, logout } = useAuth()
   const [backendErrors, setBackendErrors] = useState()
 
   const [initialUserValues, setInitialUserValues] = useState({ nombre: null, apellidos: null, numeroTelefono: null, direccion: null, codigoPostal: null, avatar: null })
@@ -46,21 +46,31 @@ export default function ProfileScreen () {
   })
 
   useEffect(() => {
-    if (loggedInUser) {
-      const preparedUser = prepareEntityImages(loggedInUser, ['avatar'])
+    if (userData) {
+      const preparedUser = prepareEntityImages(userData, ['avatar'])
       const initialValues = buildInitialValues(preparedUser, initialUserValues)
       setInitialUserValues(initialValues)
     }
-  }, [loggedInUser])
+  }, [userData])
 
-  const signOutAndNavigate = () => {
-    signOut(() => showMessage({
-      message: 'Se ha cerrado sesion correctamente',
-      type: 'success',
-      style: GlobalStyles.flashStyle,
-      titleStyle: GlobalStyles.flashTextStyle,
-      backgroundColor: GlobalStyles.brandSecondary
-    }))
+  const signOutAndNavigate = async () => {
+    try {
+      await logout()
+      showMessage({
+        message: 'Se ha cerrado sesión correctamente',
+        type: 'success',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle,
+        backgroundColor: GlobalStyles.brandSecondary
+      })
+    } catch (error) {
+      showMessage({
+        message: 'Error al cerrar sesión',
+        type: 'danger',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      })
+    }
   }
 
   const pickImage = async (onSuccess) => {

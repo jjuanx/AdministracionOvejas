@@ -4,7 +4,7 @@ import * as ExpoImagePicker from 'expo-image-picker'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as yup from 'yup'
 import DropDownPicker from 'react-native-dropdown-picker'
-import { create } from '../../api/OvejaEndpoints'
+import { create } from '../../api/OvejaFirebaseEndpoints'
 import InputItem from '../../components/InputItem'
 import TextRegular from '../../components/TextRegular'
 import * as GlobalStyles from '../../styles/GlobalStyles'
@@ -16,7 +16,7 @@ import TextError from '../../components/TextError'
 export default function CreateOvejaScreen ({ navigation }) {
   const [open, setOpen] = useState(false)
   const [backendErrors, setBackendErrors] = useState()
-  const initialOvejaValues = { id: null, estado: null, fechaNacimiento: null}
+  const initialOvejaValues = { customId: '', estado: '', fechaNacimiento: '' }
   
   const estados = [
     { label: 'Buena', value: 'buena'},
@@ -29,14 +29,14 @@ export default function CreateOvejaScreen ({ navigation }) {
 
   
   const validationSchema = yup.object().shape({
-    id: yup
+    customId: yup
       .number()
-      .typeError('El identificador debe ser un número')
-      .integer('El identificador debe ser un número entero')
-      .positive('El identificador debe ser un número positivo')
-      .min(1, 'El identificador debe ser como mínimo 1')
-      .max(99999999, 'El identificador debe ser como máximo 99999999')
-      .required('El identificador es obligatorio'),
+      .typeError('El ID debe ser un número')
+      .required('El ID numérico es obligatorio')
+      .positive('El ID debe ser un número positivo')
+      .integer('El ID debe ser un número entero')
+      .min(1, 'El ID debe ser mínimo 1')
+      .max(9999999999, 'El ID debe tener máximo 10 dígitos'),
     estado: yup
       .string()
       .oneOf(estados.map(e => e.value))
@@ -49,9 +49,21 @@ export default function CreateOvejaScreen ({ navigation }) {
   const createOveja = async (values) => {
     setBackendErrors([])
     try {
-      const createdOveja = await create(values)
+      // Calcular la edad automáticamente desde la fecha de nacimiento
+      const birthDate = new Date(values.fechaNacimiento);
+      const today = new Date();
+      const ageInYears = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24 * 365.25));
+      
+      // Preparar los datos con la edad calculada
+      const ovejaData = {
+        ...values,
+        edad: ageInYears >= 0 ? ageInYears : 0,
+        id: values.customId // Usar el ID personalizado
+      };
+      
+      const createdOveja = await create(ovejaData)
       showMessage({
-        message: `Oveja ${createdOveja.id} creada correctamente`,
+        message: `Oveja ${createdOveja.customId || createdOveja.id} creada correctamente`,
         type: 'success',
         style: GlobalStyles.flashStyle,
         titleStyle: GlobalStyles.flashTextStyle
@@ -73,8 +85,10 @@ export default function CreateOvejaScreen ({ navigation }) {
           <View style={{ alignItems: 'center' }}>
             <View style={{ width: '60%' }}>
               <InputItem
-                name='id'
-                label='Identificador:'
+                name='customId'
+                label='ID de la oveja:'
+                placeholder='Ej: 1, 123, 9999999999'
+                keyboardType='numeric'
               />
               <InputItem
                 name='fechaNacimiento'

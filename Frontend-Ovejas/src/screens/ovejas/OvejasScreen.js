@@ -1,32 +1,34 @@
-import React, {useEffect, useState, useContext} from 'react'
-import { StyleSheet, View, FlatList, Pressable  } from 'react-native'
+import React, {useEffect, useState} from 'react'
+import { StyleSheet, View, FlatList, Pressable } from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import TextRegular from '../../components/TextRegular'
-import {getAll, remove} from '../../api/OvejaEndpoints'
+import {getAll, remove} from '../../api/OvejaFirebaseEndpoints'
 import * as GlobalStyles from '../../styles/GlobalStyles'
 import ImageCard from '../../components/ImageCard'
 import TextMedium from '../../components/TextMedium'
-import  {AuthorizationContext} from '../../context/AuthorizationContext'
+import { useAuth } from '../../context/FirebaseAuthContext'
 import {showMessage} from 'react-native-flash-message'
 import ovejaStandart from '../../../assets/ovejaStandart-fondoAmarillo.png'
 import DeleteModal from '../../components/DeleteModal'
 import SearchOvejaById from '../../components/SearchOvejaById'
 
 
-const { EXPO_PUBLIC_API_BASE_URL } = process.env;
-
 export default function OvejasScreen ({navigation, route}) {
   const [ovejas, setOvejas] = useState([])
   const [ovejaToBeDeleted, setOvejaToBeDeleted] = useState(null)
-  const {loggedInUser} = useContext(AuthorizationContext)
+  const { currentUser, userData } = useAuth()
 
-  useEffect(() => {
-   if (loggedInUser) { 
-     fetchOvejas()
-   } else {
-     setOvejas(null)
-   }
- }, [loggedInUser, route]) 
+  useFocusEffect(
+    React.useCallback(() => {
+      if (currentUser) { 
+        fetchOvejas()
+      } else {
+        setOvejas([])
+      }
+      return () => {};
+    }, [currentUser])
+  ) 
 
  const fetchOvejas = async () => {
      try {
@@ -42,14 +44,13 @@ export default function OvejasScreen ({navigation, route}) {
      }
    }
 
-
   const renderHeader = () => {
     return (
       <>
-      {loggedInUser &&
+      {currentUser &&
         <SearchOvejaById navigation={navigation}></SearchOvejaById>
       }
-      { loggedInUser &&
+      { currentUser &&
       <Pressable
         onPress={() => navigation.navigate('CreateOvejaScreen')}
         style={({pressed}) => [
@@ -85,7 +86,7 @@ export default function OvejasScreen ({navigation, route}) {
 
 
         <ImageCard
-          imageUri={item.logo ? { uri: EXPO_PUBLIC_API_BASE_URL + '/' + item.logo } : ovejaStandart}
+          imageUri={ovejaStandart}
           title= {`ID: ${item.id}`}
           onPress={() => {
             navigation.navigate('OvejasDetailScreen', { id: item.id })
@@ -135,9 +136,9 @@ export default function OvejasScreen ({navigation, route}) {
     <>
       <FlatList
         style={styles.container}
-        data={ovejas}
+        data={ovejas || []}
         renderItem={renderOveja}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmptyOvejasList}
       />

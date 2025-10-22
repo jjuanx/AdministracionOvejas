@@ -1,8 +1,8 @@
 import * as ExpoImagePicker from 'expo-image-picker'
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Image, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { AuthorizationContext } from '../../context/AuthorizationContext'
+import { useAuth } from '../../context/FirebaseAuthContext'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import { showMessage } from 'react-native-flash-message'
@@ -12,10 +12,10 @@ import InputItem from '../../components/InputItem'
 import TextRegular from '../../components/TextRegular'
 import TextError from '../../components/TextError'
 
-export default function RegisterScreen() {
-  const { signUp } = useContext(AuthorizationContext)
+export default function RegisterScreen({ navigation }) {
+  const { signup } = useAuth()
   const [backendErrors, setBackendErrors] = useState()
-  const initialUserValues = { nombre: null, apellidos: null, email: null, password: null, numeroTelefono: null, direccion: null, codigoPostal: null, avatar: null }
+  const initialUserValues = { nombre: '', apellidos: '', email: '', password: '', numeroTelefono: '', direccion: '', codigoPostal: '', avatar: null }
 
   const validationSchema = yup.object().shape({
     nombre: yup
@@ -74,17 +74,34 @@ export default function RegisterScreen() {
     }
   }
 
-  const register = (data) => {
+  const register = async (data) => {
     setBackendErrors([])
-    signUp(data, () => showMessage({
-      message: `Success. ${data.nombre}, welcome to OvejasAdministrator! 😀`,
-      type: 'success',
-      style: GlobalStyles.flashStyle,
-      titleStyle: GlobalStyles.flashTextStyle
-    }),
-      (error) => {
-        setBackendErrors(error.errors)
+    try {
+      await signup({
+        email: data.email,
+        password: data.password,
+        nombre: data.nombre,
+        apellidos: data.apellidos,
+        numeroTelefono: data.numeroTelefono,
+        direccion: data.direccion,
+        codigoPostal: data.codigoPostal,
+        tipoUsuario: 'propietario'
       })
+      showMessage({
+        message: `¡Éxito! ${data.nombre}, ¡bienvenido a OvejasAdministrator! 😀`,
+        type: 'success',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      })
+    } catch (error) {
+      showMessage({
+        message: error.message || 'Error al registrar usuario',
+        type: 'danger',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      })
+      setBackendErrors([error.message])
+    }
   }
   return (
     <Formik
@@ -182,6 +199,22 @@ export default function RegisterScreen() {
                       styles.button]}
                   >
                     <TextRegular textStyle={styles.text}>Sign up</TextRegular>
+                  </Pressable>
+
+                  <TextRegular textStyle={{ textAlign: 'center', marginTop: 10 }}>Already have an account?</TextRegular>
+                  <Pressable
+                    onPress={() => navigation.navigate('Login')}
+                    style={({ pressed }) => [
+                      {
+                        backgroundColor: pressed
+                          ? GlobalStyles.brandGreenTap
+                          : GlobalStyles.brandGreen
+                      },
+                      styles.button
+                    ]}>
+                    <TextRegular textStyle={styles.text}>
+                      Sign in
+                    </TextRegular>
                   </Pressable>
                 </View>
               </View>

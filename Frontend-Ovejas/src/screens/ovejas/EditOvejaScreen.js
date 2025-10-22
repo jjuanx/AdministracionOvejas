@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as yup from 'yup'
 import DropDownPicker from 'react-native-dropdown-picker'
-import { update, getDetail } from '../../api/OvejaEndpoints'
+import { update, getDetail } from '../../api/OvejaFirebaseEndpoints'
 import InputItem from '../../components/InputItem'
 import TextRegular from '../../components/TextRegular'
 import * as GlobalStyles from '../../styles/GlobalStyles'
@@ -58,7 +58,17 @@ export default function EditOvejaScreen ({ navigation, route }) {
     const updateOveja = async (values) => {
         setBackendErrors([])
         try {
-            const updatedOveja = await update(oveja.id, values)
+            // Calcular la edad automáticamente desde la fecha de nacimiento
+            const today = new Date();
+            const birthDate = new Date(values.fechaNacimiento);
+            const calculatedAge = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24 * 365.25));
+            
+            const ovejaData = {
+                ...values,
+                edad: calculatedAge >= 0 ? calculatedAge : 0
+            };
+            
+            const updatedOveja = await update(oveja.id, ovejaData)
             showMessage({
                 message: `Oveja ${updatedOveja.id} actualizada correctamente`,
                 type: 'success',

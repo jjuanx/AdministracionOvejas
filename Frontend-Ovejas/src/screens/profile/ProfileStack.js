@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import React, { useContext } from 'react'
-import { AuthorizationContext } from '../../context/AuthorizationContext'
+import React from 'react'
+import { useAuth } from '../../context/FirebaseAuthContext'
 import LoginScreen from './LoginScreen'
 import ProfileScreen from './ProfileScreen'
 import RegisterScreen from './RegisterScreen'
@@ -8,11 +8,11 @@ import RegisterScreen from './RegisterScreen'
 const Stack = createNativeStackNavigator()
 
 export default function ProfileStack () {
-  const { loggedInUser } = useContext(AuthorizationContext)
+  const { currentUser } = useAuth()
 
   return (
     <Stack.Navigator>
-           {!loggedInUser
+           {!currentUser
              ? (
                 <>
                     <Stack.Screen name='LoginScreen' options={{ title: 'Log in para acceder a tu Perfil' }} component={LoginScreen} />

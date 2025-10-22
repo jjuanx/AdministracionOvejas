@@ -1,17 +1,17 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, View, Pressable, Image } from 'react-native'
 import * as GlobalStyles from '../../styles/GlobalStyles'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import InputItem from '../../components/InputItem'
-import { AuthorizationContext } from '../../context/AuthorizationContext'
+import { useAuth } from '../../context/FirebaseAuthContext'
 import TextRegular from '../../components/TextRegular'
 import logo from '../../../assets/ovejaLogo.png'
 import TextError from '../../components/TextError'
 import { showMessage } from 'react-native-flash-message'
 
 export default function LoginScreen ({ navigation }) {
-  const { signIn } = useContext(AuthorizationContext)
+  const { login } = useAuth()
   const [backendErrors, setBackendErrors] = useState()
   const validationSchema = yup.object().shape({
     email: yup
@@ -25,27 +25,25 @@ export default function LoginScreen ({ navigation }) {
       .required('La contraseña es obligatoria')
   })
 
-  const login = (values) => {
+  const loginHandler = async (values) => {
     setBackendErrors([])
-    signIn(values,
-      (loggedInUser) => {
-        loggedInUser.tipoUsuario === 'propietario'
-          ? showMessage({
-            message: `Bienvenido de vuelta ${loggedInUser.nombre}.`,
-            type: 'success',
-            style: GlobalStyles.flashStyle,
-            titleStyle: GlobalStyles.flashTextStyle
-          })
-          : showMessage({
-            message: `Bienvenido ${loggedInUser.nombre}. Usted no es un propietario.`,
-            type: 'warning',
-            style: GlobalStyles.flashStyle,
-            titleStyle: GlobalStyles.flashTextStyle
-          })
-      },
-      (error) => {
-        setBackendErrors(error.errors)
+    try {
+      await login(values.email, values.password)
+      showMessage({
+        message: 'Bienvenido de vuelta.',
+        type: 'success',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
       })
+    } catch (error) {
+      showMessage({
+        message: error.message || 'Error al iniciar sesión',
+        type: 'danger',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      })
+      setBackendErrors([error.message])
+    }
   }
 
   return (
@@ -53,7 +51,7 @@ export default function LoginScreen ({ navigation }) {
     <Formik
       validationSchema={validationSchema}
       initialValues={{ email: '', password: '' }}
-      onSubmit={login}>
+      onSubmit={loginHandler}>
       {({ handleSubmit }) => (
         <View style={{ alignItems: 'center' }}>
           <View style={styles.container}>
@@ -93,7 +91,7 @@ export default function LoginScreen ({ navigation }) {
 
             <TextRegular textStyle={{ textAlign: 'center' }}>Not a member?</TextRegular>
             <Pressable
-              onPress={() => navigation.navigate('RegisterScreen')
+              onPress={() => navigation.navigate('Register')
               }
               style={({ pressed }) => [
                 {

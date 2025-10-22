@@ -11,31 +11,24 @@ import ControlPanelStack from './controlPanel/ControPanelStack'
 // eslint-disable-next-line camelcase
 import { useFonts, Montserrat_400Regular, Montserrat_600SemiBold } from '@expo-google-fonts/montserrat'
 import FlashMessage, { showMessage } from 'react-native-flash-message'
-import { AuthorizationContext } from '../context/AuthorizationContext'
+import { useAuth } from '../context/FirebaseAuthContext'
 import { AppContext } from '../context/AppContext'
-import { ApiError } from '../api/helpers/Errors'
 
 const Tab = createBottomTabNavigator()
 
 export default function Layout () {
-  const { getToken, signOut } = useContext(AuthorizationContext)
+  const { currentUser, userData } = useAuth()
   const { error, setError } = useContext(AppContext)
 
   const init = async () => {
-    await getToken(
-      (recoveredUser) => showMessage({
-        message: `Sesion recuperada. Has iniciado sesion como ${recoveredUser.nombre}`,
+    if (currentUser && userData) {
+      showMessage({
+        message: `Sesión recuperada. Has iniciado sesión como ${userData.nombre}`,
         type: 'success',
         style: GlobalStyles.flashStyle,
         titleStyle: GlobalStyles.flashTextStyle
-      }),
-      (error) => showMessage({
-        message: `La sesion no se ha podido recuperar. Inicia sesion ${error} `,
-        type: 'warning',
-        style: GlobalStyles.flashStyle,
-        titleStyle: GlobalStyles.flashTextStyle
       })
-    )
+    }
   }
 
   useEffect(() => {
@@ -46,9 +39,6 @@ export default function Layout () {
         style: GlobalStyles.flashStyle,
         titleStyle: GlobalStyles.flashTextStyle
       })
-      if (error instanceof ApiError && (error.code === 403 || error.code === 401)) {
-        signOut()
-      }
       setError(null)
     }
   }, [error])

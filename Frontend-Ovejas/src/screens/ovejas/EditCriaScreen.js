@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View , Switch} from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as yup from 'yup'
 import DropDownPicker from 'react-native-dropdown-picker'
-import { update, getDetail } from '../../api/CriaEndpoints'
+import { update, getDetail } from '../../api/CriaFirebaseEndpoints'
 import InputItem from '../../components/InputItem'
 import TextRegular from '../../components/TextRegular'
 import * as GlobalStyles from '../../styles/GlobalStyles'
@@ -25,7 +25,7 @@ export default function EditCriaScreen ({ navigation, route }) {
 
     const [items, setItems] = useState(sexos)
 
-    const [initialCriaValues, setInitialOvejaValues] = useState({ viva: null, fechaNacimiento: null, sexo: null, ovejaId: route.params.id})
+    const [initialCriaValues, setInitialOvejaValues] = useState({ viva: null, fechaNacimiento: null, sexo: null, ovejaId: route.params.ovejaId || null})
     const validationSchema = yup.object().shape({
     fechaNacimiento: yup
       .date()
@@ -45,6 +45,7 @@ export default function EditCriaScreen ({ navigation, route }) {
             const initialValues = buildInitialValues(fetchedCria, initialCriaValues)
             setInitialOvejaValues(initialValues)
         } catch (error) {
+            console.error('❌ Error en fetchCriaDetails:', error);
             showMessage({
             message: `Ha habido un error cargando los datos de la cria (id ${route.params.id}). ${error}`,
             type: 'error',

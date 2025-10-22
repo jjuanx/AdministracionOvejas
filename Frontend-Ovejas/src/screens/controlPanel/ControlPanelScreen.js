@@ -1,23 +1,26 @@
 /* src/screens/controlPanel/ControlPanelScreen.js */
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet, ScrollView , Text} from 'react-native';
-import { getResumen } from '../../api/AnalyticsEndpoints';
-import { AuthorizationContext } from '../../context/AuthorizationContext';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
+import { getResumen } from '../../api/AnalyticsFirebaseEndpoints';
+import { useAuth } from '../../context/FirebaseAuthContext';
 import TextMedium   from '../../components/TextMedium';
 import TextRegular  from '../../components/TextRegular';
 import * as GlobalStyles from '../../styles/GlobalStyles';
 import DonutChart    from '../../components/DonutChart'; 
 
 export default function ControlPanelScreen () {
-  const { loggedInUser } = useContext(AuthorizationContext);
+  const { currentUser, userData } = useAuth();
   const [data, setData] = useState(null);
 
   const renderEmptyOvejasList = () => {
     return(
-      <TextRegular textStyle={styles.emptyList}>
-        Todavia no hay ovejas. Has iniciado sesion?
-      </TextRegular>
+      <View>
+        <TextRegular textStyle={styles.emptyList}>
+          Todavia no hay ovejas. Has iniciado sesion?
+        </TextRegular>
+      </View>
     )
   }
 
@@ -37,22 +40,22 @@ export default function ControlPanelScreen () {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (loggedInUser) {
+      if (currentUser) {
         fetchResumen();
       }
       return () => {};
-    }, [loggedInUser]) 
+    }, [currentUser]) 
   );
 
 
   useEffect(() => {
-  if (!loggedInUser) { 
+  if (!currentUser) { 
     renderEmptyOvejasList() 
   }
-  if (loggedInUser){
+  if (currentUser){
     fetchResumen()
   }
-}, [loggedInUser]);
+}, [currentUser]);
 
 if (!data) return renderEmptyOvejasList()
 
@@ -60,21 +63,21 @@ if (!data) return renderEmptyOvejasList()
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.card}>
         <TextMedium textStyle={styles.titulo}>Total de ovejas</TextMedium>
-        <TextMedium textStyle={styles.big}>{data.totalOvejas}</TextMedium>
+        <TextMedium textStyle={styles.big}>{data?.totalOvejas || 0}</TextMedium>
       </View>
 
       <View style={styles.card}>
         <TextMedium textStyle={styles.titulo}>Total de crías</TextMedium>
-        <TextMedium textStyle={styles.big}>{data.totalCrias}</TextMedium>
+        <TextMedium textStyle={styles.big}>{data?.totalCrias || 0}</TextMedium>
       </View>
 
       <View style={styles.card}>
         <TextMedium textStyle={styles.titulo}>Resumen estado rebaño</TextMedium>
         <DonutChart
           data={[
-            { label: 'Buena',   value: data.estados.buena   || 0 },
-            { label: 'Regular', value: data.estados.regular || 0 },
-            { label: 'Mala',    value: data.estados.mala    || 0 }
+            { label: 'Buena',   value: data?.estados?.buena   || 0 },
+            { label: 'Regular', value: data?.estados?.regular || 0 },
+            { label: 'Mala',    value: data?.estados?.mala    || 0 }
           ]}
         />
       </View>
@@ -82,14 +85,14 @@ if (!data) return renderEmptyOvejasList()
       <View style={styles.card}>
         <TextMedium textStyle={styles.titulo}>Estado de las crías</TextMedium>
         <DonutChart data={[
-            { label: 'Viva',   value: data.criasVivas   || 0 },
-            { label: 'Muerta', value: data.criasMuertas || 0 }
+            { label: 'Viva',   value: data?.criasVivas   || 0 },
+            { label: 'Muerta', value: data?.criasMuertas || 0 }
           ]}/>
       </View>
 
       <View style={styles.card}>
         <TextMedium textStyle={styles.titulo}>Edad media oveja</TextMedium>
-        <TextMedium textStyle={styles.big}>{data.edadMedia} años</TextMedium>
+        <TextMedium textStyle={styles.big}>{data?.edadMedia || 0} años</TextMedium>
       </View>
     </ScrollView>
   );

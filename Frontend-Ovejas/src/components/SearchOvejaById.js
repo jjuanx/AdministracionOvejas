@@ -4,7 +4,7 @@ import { StyleSheet, TextInput, View, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { showMessage } from 'react-native-flash-message';
 import * as GlobalStyles from '../styles/GlobalStyles';
-import { getDetail } from '../api/OvejaEndpoints';
+import { getDetail } from '../api/OvejaFirebaseEndpoints';
 
 /* eslint-disable react/prop-types */
 export default function SearchOvejaById ({ navigation }) {
@@ -13,9 +13,9 @@ export default function SearchOvejaById ({ navigation }) {
   // Ejecuta la búsqueda
   const search = useCallback(async () => {
     const id = idInput.trim();
-    if (id.length !== 8 || !/^\d+$/.test(id)) {
+    if (id.length === 0) {
       showMessage({
-        message: 'El identificador debe tener 8 dígitos numéricos',
+        message: 'Por favor ingresa un ID válido',
         type: 'warning',
         style: GlobalStyles.flashStyle,
         titleStyle: GlobalStyles.flashTextStyle
@@ -44,8 +44,6 @@ export default function SearchOvejaById ({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Buscar oveja por ID (8 dígitos)"
-        keyboardType="number-pad"
-        maxLength={8}
         value={idInput}
         onChangeText={text => {
             setIdInput(text)

@@ -4,7 +4,7 @@ import * as ExpoImagePicker from 'expo-image-picker'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as yup from 'yup'
 import DropDownPicker from 'react-native-dropdown-picker'
-import { create } from '../../api/CriaEndpoints'
+import { create } from '../../api/CriaFirebaseEndpoints'
 import InputItem from '../../components/InputItem'
 import TextRegular from '../../components/TextRegular'
 import TextMedium from '../../components/TextMedium'
@@ -16,7 +16,7 @@ import TextError from '../../components/TextError'
 export default function CreateCriaScreen ({ navigation, route }) {
  const [open, setOpen] = useState(false)
   const [backendErrors, setBackendErrors] = useState()
-  const initialCriaValues = { id: null, fechaNacimiento: null, sexo: null, ovejaId: route.params.id, viva: true}
+  const initialCriaValues = { id: '', fechaNacimiento: null, sexo: null, ovejaId: route.params.id, viva: true}
   
   const sexos = [
     { label: 'Macho', value: 'macho'},
@@ -30,12 +30,13 @@ export default function CreateCriaScreen ({ navigation, route }) {
   const validationSchema = yup.object().shape({
     id: yup
       .number()
-      .typeError('El identificador debe ser un número')
-      .integer('El identificador debe ser un número entero')
-      .positive('El identificador debe ser un número positivo')
-      .min(1, 'El identificador debe ser como mínimo 1')
-      .max(9999, 'El identificador debe ser como máximo 9999')
-      .required('El identificador es obligatorio'),
+      .typeError('El ID debe ser un número')
+      .positive('El ID debe ser un número positivo')
+      .integer('El ID debe ser un número entero')
+      .min(1, 'El ID debe ser mínimo 1')
+      .max(9999999999, 'El ID debe tener máximo 10 dígitos')
+      .nullable()
+      .transform((value, originalValue) => originalValue === '' ? null : value),
     fechaNacimiento: yup
       .date()
       .required('La fecha de nacimiento es obligatoria'),
@@ -75,7 +76,9 @@ export default function CreateCriaScreen ({ navigation, route }) {
             <View style={{ width: '60%' }}>
               <InputItem
                 name='id'
-                label='Identificador:'
+                label='ID de la cría (opcional):'
+                placeholder='Ej: 1, 123... (vacío = ID automático)'
+                keyboardType='numeric'
               />
               <InputItem
                 name='fechaNacimiento'

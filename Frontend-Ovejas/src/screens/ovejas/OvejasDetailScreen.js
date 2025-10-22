@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, FlatList, ImageBackground, Image, Pressable } from 'react-native'
 import { showMessage } from 'react-native-flash-message'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { getDetail } from '../../api/OvejaEndpoints'
+import { getDetail } from '../../api/OvejaFirebaseEndpoints'
 import ImageCard from '../../components/ImageCard'
 import TextRegular from '../../components/TextRegular'
 import TextMedium from '../../components/TextMedium'
@@ -10,7 +10,7 @@ import * as GlobalStyles from '../../styles/GlobalStyles'
 import DeleteModal from '../../components/DeleteModal'
 import criaStandart from '../../../assets/criaStandart-fondoVerde.png'
 import backgroundOveja from '../../../assets/backgroundOveja.jpg'
-import {remove} from '../../api/CriaEndpoints'
+import {remove, getByOvejaId} from '../../api/CriaFirebaseEndpoints'
 
 
 export default function OvejasDetailScreen ({ navigation, route }) {
@@ -32,10 +32,18 @@ export default function OvejasDetailScreen ({ navigation, route }) {
 
   const fetchOvejaDetails = async () => {
     try {
-      const fetchedOvejas = await getDetail(route.params.id)
+      const fetchedOveja = await getDetail(route.params.id)
+      const fetchedCrias = await getByOvejaId(route.params.id)
+      
+      // Calcular crías vivas y muertas
+      const criasVivas = fetchedCrias.filter(cria => cria.viva === true).length
+      const criasMuertas = fetchedCrias.filter(cria => cria.viva === false).length
+      
       setOveja({
-        ... fetchedOvejas,
-        crias:  fetchedOvejas?.Crias ?? []
+        ...fetchedOveja,
+        crias: fetchedCrias,
+        vecesParidaVivas: criasVivas,
+        criasMuertas: criasMuertas
       })
     } catch (error) {
       showMessage({
@@ -137,7 +145,7 @@ const renderCria = ({ item }) => {
 
         <ImageCard
         imageUri={criaStandart}
-        title={`Cria: ${item.id}`}>
+        title={`Cria: ${item.criaId || item.id}`}>
         { (item.viva === false) &&
             <TextMedium textStyle={styles.fallecimiento}>Fallecida</TextMedium>
         }
@@ -145,8 +153,12 @@ const renderCria = ({ item }) => {
         <TextMedium>Sexo: <TextRegular>{item.sexo}</TextRegular></TextMedium>
         <View style={styles.actionButtonsContainer}>
             <Pressable
-              onPress={() => navigation.navigate('EditCriaScreen', { id: item.id })
-              }
+              onPress={() => {
+                navigation.navigate('EditCriaScreen', { 
+                  id: item.id, 
+                  ovejaId: item.ovejaId || route.params.ovejaId || route.params.id 
+                });
+              }}
               style={({ pressed }) => [
                 {
                   backgroundColor: pressed

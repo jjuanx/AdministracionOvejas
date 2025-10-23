@@ -1,7 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import { Image, Keyboard,KeyboardAvoidingView, Platform, Pressable, StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native'
+import { doc, updateDoc } from 'firebase/firestore'
+import { updateProfile } from 'firebase/auth'
+import { db } from '../../config/firebase'
 
-import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useAuth } from '../../context/FirebaseAuthContext'
 import { Formik } from 'formik'
 import * as yup from 'yup'
@@ -20,7 +22,7 @@ export default function ProfileScreen () {
   const { currentUser, userData, logout } = useAuth()
   const [backendErrors, setBackendErrors] = useState()
 
-  const [initialUserValues, setInitialUserValues] = useState({ nombre: null, apellidos: null, numeroTelefono: null, direccion: null, codigoPostal: null, avatar: null })
+  const [initialUserValues, setInitialUserValues] = useState({ nombre: null, apellidos: null, numeroTelefono: null, direccion: null, codigoPostal: null })
 
   const validationSchema = yup.object().shape({
     nombre: yup
@@ -87,19 +89,43 @@ export default function ProfileScreen () {
     }
   }
 
-  const update = (data) => {
+  const update = async (data) => {
     setBackendErrors([])
-
-    updateProfile(data, () => showMessage({
-      message: 'Perfil actualizado correctamente',
-      type: 'success',
-      style: GlobalStyles.flashStyle,
-      titleStyle: GlobalStyles.flashTextStyle
-    }),
-    (error) => {
-      console.error(error.errors)
-      setBackendErrors(error.errors)
-    })
+    try {
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      let updateData = {
+        nombre: data.nombre,
+        apellidos: data.apellidos,
+        numeroTelefono: data.numeroTelefono,
+        direccion: data.direccion,
+        codigoPostal: data.codigoPostal,
+        updatedAt: new Date()
+      };
+      
+      await updateDoc(userDocRef, updateData);
+      
+      if (data.nombre || data.apellidos) {
+        await updateProfile(currentUser, {
+          displayName: `${data.nombre} ${data.apellidos}`
+        });
+      }
+      
+      showMessage({
+        message: 'Perfil actualizado correctamente',
+        type: 'success',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      });
+    } catch (error) {
+      console.error(error);
+      setBackendErrors([{ msg: error.message }]);
+      showMessage({
+        message: 'Error al actualizar el perfil',
+        type: 'danger',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      });
+    }
   }
   return (
     <Formik
@@ -116,26 +142,9 @@ export default function ProfileScreen () {
               <View style={{ alignItems: 'center' }}>
                 <View style={styles.container}>
                   <View style={{ flexDirection: 'row', marginTop: 30 }}>
-                    <TouchableOpacity onPress={() =>
-                      pickImage(
-                        async result => {
-                          await setFieldValue('avatar', result)
-                        }
-                      )
-                    }>
-                      <Image style={styles.image} source={values.avatar ? { uri: values.avatar.assets[0].uri } : maleAvatar} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {
-                      pickImage(
-                        async result => {
-                          await setFieldValue('avatar', result)
-                        }
-                      )
-                    }}>
-                      <View style={{ paddingRight: 0, height: 30 }}>
-                        <MaterialCommunityIcons name='pencil' style={{ marginLeft: 0 }} size={30} />
-                      </View>
-                    </TouchableOpacity>
+                    <View>
+                      <Image style={styles.image} source={maleAvatar} />
+                    </View>
                   </View>
                   <InputItem
                     name='nombre'

@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as yup from 'yup'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { create } from '../../api/CriaFirebaseEndpoints'
+import { getDetail } from '../../api/OvejaFirebaseEndpoints'
 import InputItem from '../../components/InputItem'
 import TextRegular from '../../components/TextRegular'
 import TextMedium from '../../components/TextMedium'
@@ -14,9 +15,28 @@ import { ErrorMessage, Formik } from 'formik'
 import TextError from '../../components/TextError'
 
 export default function CreateCriaScreen ({ navigation, route }) {
- const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false)
   const [backendErrors, setBackendErrors] = useState()
+  const [ovejaMadre, setOvejaMadre] = useState(null)
   const initialCriaValues = { id: '', fechaNacimiento: null, sexo: null, ovejaId: route.params.id, viva: true}
+
+  useEffect(() => {
+    const fetchOvejaMadre = async () => {
+      try {
+        const oveja = await getDetail(route.params.id)
+        setOvejaMadre(oveja)
+      } catch (error) {
+        console.error('Error al obtener datos de la oveja madre:', error)
+        showMessage({
+          message: 'Error al obtener datos de la oveja madre',
+          type: 'danger',
+          style: GlobalStyles.flashStyle,
+          titleStyle: GlobalStyles.flashTextStyle
+        })
+      }
+    }
+    fetchOvejaMadre()
+  }, [])
   
   const sexos = [
     { label: 'Macho', value: 'macho'},
@@ -39,7 +59,12 @@ export default function CreateCriaScreen ({ navigation, route }) {
       .transform((value, originalValue) => originalValue === '' ? null : value),
     fechaNacimiento: yup
       .date()
-      .required('La fecha de nacimiento es obligatoria'),
+      .required('La fecha de nacimiento es obligatoria')
+      .test('fecha-nacimiento', 'La fecha de nacimiento no puede ser anterior a la fecha de nacimiento de la madre', 
+        function(value) {
+          if (!value || !ovejaMadre?.fechaNacimiento) return true;
+          return new Date(value) >= new Date(ovejaMadre.fechaNacimiento);
+        }),
     sexo: yup
       .string()
       .oneOf(sexos.map(e => e.value))

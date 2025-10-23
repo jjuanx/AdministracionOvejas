@@ -39,11 +39,30 @@ export default function OvejasDetailScreen ({ navigation, route }) {
       const criasVivas = fetchedCrias.filter(cria => cria.viva === true).length
       const criasMuertas = fetchedCrias.filter(cria => cria.viva === false).length
       
+      // Calcular vecesParida (total de crías)
+      const vecesParida = fetchedCrias.length
+
+      // Encontrar la fecha del último parto (fecha de nacimiento de la cría más joven)
+      let fechaUltimoParto = null
+      if (fetchedCrias.length > 0) {
+        const fechasNacimiento = fetchedCrias
+          .map(cria => new Date(cria.fechaNacimiento))
+          .filter(fecha => !isNaN(fecha.getTime())); // Filtrar fechas válidas
+        
+        if (fechasNacimiento.length > 0) {
+          fechaUltimoParto = new Date(Math.max(...fechasNacimiento))
+            .toISOString()
+            .split('T')[0]; // Formato YYYY-MM-DD
+        }
+      }
+      
       setOveja({
         ...fetchedOveja,
         crias: fetchedCrias,
         vecesParidaVivas: criasVivas,
-        criasMuertas: criasMuertas
+        criasMuertas: criasMuertas,
+        vecesParida: vecesParida,
+        fechaUltimoParto: fechaUltimoParto
       })
     } catch (error) {
       showMessage({
